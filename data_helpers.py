@@ -44,6 +44,16 @@ def load_data_and_labels(positive_data_file, negative_data_file):
     y = np.concatenate([positive_labels, negative_labels], 0)
     return [x_text, y]
 
+def load_transcript(transcript_file):
+    text = open(transcript_file, "r").read()
+    text = re.sub(r"\d:\d+:\d+\. S(\d+|\?): ", '', text)
+    text = re.sub(r"\[.*?\]", '', text)
+    text = re.sub(r"_+", '', text)
+    text = re.sub("\"", '', text)
+    x_text = re.split("[^a-zA-Z'\- ]", text)
+    x_text = [clean_str(sent) for sent in x_text]
+    x_text = [sent for sent in x_text if len(sent.split()) > 5]
+    return x_text
 
 def batch_iter(data, batch_size, num_epochs, shuffle=True):
     """

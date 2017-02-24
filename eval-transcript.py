@@ -1,14 +1,17 @@
 #! /usr/bin/env python
 
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = "3"
+
 import tensorflow as tf
 import numpy as np
-import os
 import time
 import datetime
 import data_helpers
 from text_cnn import TextCNN
 from tensorflow.contrib import learn
 import csv
+import sys
 
 # Parameters
 # ==================================================
@@ -27,13 +30,7 @@ tf.flags.DEFINE_boolean("eval_train", False, "Evaluate on all training data")
 tf.flags.DEFINE_boolean("allow_soft_placement", True, "Allow device soft device placement")
 tf.flags.DEFINE_boolean("log_device_placement", False, "Log placement of ops on devices")
 
-
 FLAGS = tf.flags.FLAGS
-FLAGS._parse_flags()
-print("\nParameters:")
-for attr, value in sorted(FLAGS.__flags.items()):
-    print("{}={}".format(attr.upper(), value))
-print("")
 
 # CHANGE THIS: Load data. Load your own data here
 if FLAGS.eval_train:
@@ -41,8 +38,7 @@ if FLAGS.eval_train:
     y_test = np.argmax(y_test, axis=1)
 else:
     #x_raw = ["a masterpiece four years in the making", "everything is off."]
-    x_raw = list(open(FLAGS.test_file, "r").readlines())
-    #y_test = [1, 0]
+    x_raw = data_helpers.load_transcript(FLAGS.test_file)
     y_test = None
 
 checkpoint_dir = "./runs/" + FLAGS.checkpoint_name + "/checkpoints"
@@ -51,8 +47,6 @@ checkpoint_dir = "./runs/" + FLAGS.checkpoint_name + "/checkpoints"
 vocab_path = os.path.join(checkpoint_dir, "..", "vocab")
 vocab_processor = learn.preprocessing.VocabularyProcessor.restore(vocab_path)
 x_test = np.array(list(vocab_processor.transform(x_raw)))
-
-print("\nEvaluating...\n")
 
 # Evaluation
 # ==================================================
@@ -94,8 +88,6 @@ if y_test is not None:
 
 # Save the evaluation to a csv
 predictions_human_readable = np.column_stack((all_predictions, np.array(x_raw)))
-out_path = os.path.join(checkpoint_dir, "..", "prediction.csv")
-print("Saving evaluation to {0}".format(out_path))
-with open(out_path, 'w') as f:
-    for row in predictions_human_readable:
-        f.write("{:d}\t{:s}".format(int(float(row[0])), row[1]))
+for row in predictions_human_readable:
+    if int(float(row[0])) is 0:
+        print(row[1])
