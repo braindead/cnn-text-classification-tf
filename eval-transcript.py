@@ -38,7 +38,8 @@ if FLAGS.eval_train:
     y_test = np.argmax(y_test, axis=1)
 else:
     #x_raw = ["a masterpiece four years in the making", "everything is off."]
-    x_raw = data_helpers.load_transcript(FLAGS.test_file)
+    phrases = data_helpers.load_transcript(FLAGS.test_file)
+    x_raw = [data_helpers.clean_str(phrase) for phrase in phrases]
     y_test = None
 
 checkpoint_dir = "./runs/" + FLAGS.checkpoint_name + "/checkpoints"
@@ -88,6 +89,6 @@ if y_test is not None:
 
 # Save the evaluation to a csv
 predictions_human_readable = np.column_stack((all_predictions, np.array(x_raw)))
-for row in predictions_human_readable:
-    if int(float(row[0])) is 0:
-        print(row[1])
+for index, prediction in enumerate(predictions_human_readable):
+    if int(float(prediction)) is 0:
+        print(test_data[index])

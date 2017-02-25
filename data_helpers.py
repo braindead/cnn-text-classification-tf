@@ -50,10 +50,9 @@ def load_transcript(transcript_file):
     text = re.sub(r"\[.*?\]", '', text)
     text = re.sub(r"_+", '', text)
     text = re.sub("\"", '', text)
-    x_text = re.split("[^a-zA-Z'\- ]", text)
-    x_text = [clean_str(sent) for sent in x_text]
-    x_text = [sent for sent in x_text if len(sent.split()) > 5]
-    return x_text
+    text = re.split("[^a-zA-Z'\- ]", text)
+    text = [sent for sent in text if len(sent.split()) > 5]
+    return text
 
 def batch_iter(data, batch_size, num_epochs, shuffle=True):
     """
