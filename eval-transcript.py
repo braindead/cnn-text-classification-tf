@@ -87,8 +87,6 @@ if y_test is not None:
     print("Total number of test examples: {}".format(len(y_test)))
     print("Accuracy: {:g}".format(correct_predictions/float(len(y_test))))
 
-# Save the evaluation to a csv
-predictions_human_readable = np.column_stack((all_predictions, np.array(x_raw)))
-for index, prediction in enumerate(predictions_human_readable):
+for index, prediction in enumerate(all_predictions):
     if int(float(prediction)) is 0:
-        print(test_data[index])
+        print(phrases[index])

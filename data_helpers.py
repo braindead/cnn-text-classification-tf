@@ -51,7 +51,7 @@ def load_transcript(transcript_file):
     text = re.sub(r"_+", '', text)
     text = re.sub("\"", '', text)
     text = re.split("[^a-zA-Z'\- ]", text)
-    text = [sent for sent in text if len(sent.split()) > 5]
+    text = [sent.strip() for sent in text if len(sent.split()) > 5]
     return text
 
 def batch_iter(data, batch_size, num_epochs, shuffle=True):
